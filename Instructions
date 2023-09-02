@@ -1,4 +1,5 @@
 Your first steps for start this app:
+    create your .env.prod
 1) Dockeraithing the application,
     (command teminal pycharm)
     docker-compose -f docker-compose.prod.yaml up -d --build
