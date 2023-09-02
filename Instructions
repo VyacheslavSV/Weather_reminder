@@ -1,0 +1,32 @@
+Your first steps for start this app:
+1) Dockeraithing the application,
+    (command teminal pycharm)
+    docker-compose -f docker-compose.prod.yaml up -d --build
+
+    if you need down app in yor docker,
+    (command teminal pycharm)
+    docker-compose -f docker-compose.prod.yaml down -v
+
+2) open postmen and enter data
+    http://localhost:1337/api/v1/weather_reminder/users/  POST SEND
+    body
+        username
+        email
+        password
+    http://localhost:1337/api/v1/token/ POST SEND
+    body
+        username
+        password
+
+        copy your access token
+    http://localhost:1337/api/v1/weather_reminder/cities/?city_name=london GET SEND
+    param
+        city_name  london
+
+    http://localhost:1337/api/v1/weather_reminder/subscribes/  POST SEND
+    Headers
+        Authorization Bearer yor token
+    body
+        user                  1
+        city                  1
+        period_notifications  1
