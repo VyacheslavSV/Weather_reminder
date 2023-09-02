@@ -156,7 +156,7 @@ REST_FRAMEWORK = {
 
 
 # Weather API and key
-WEATHER_API_KEY = os.environ.get("WEATHER_API_KEY", "364be1b70859b8416d16006f5e875b94")
+WEATHER_API_KEY = os.environ.get("WEATHER_API_KEY")
 GEO_URL = 'https://api.openweathermap.org/geo/1.0/direct'
 WEATHER_URL = 'https://api.openweathermap.org/data/2.5/weather'
 
