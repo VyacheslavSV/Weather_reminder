@@ -15,9 +15,14 @@ def get_city_data(city_name: str, lang: str = 'en') -> Response | Any:
     :param lang: The language code for the response (default is 'en').
     :return: The city data as a dictionary.
 
-    This method fetches data for a given city from the weather API. It sends a request to the GEO_URL with the city name and language code as parameters, along with the weather API key. If the response status code is 200, it extracts the city data from the response and saves it using the CitySerializer. The city data is then returned as a dictionary.
+    This method fetches data for a given city from the weather API.
+    It sends a request to the GEO_URL with the city name and language code as parameters,
+    along with the weather API key.
+    If the response status code is 200, it extracts the city data from the response and saves
+    it using the CitySerializer. The city data is then returned as a dictionary.
 
-    If there is a problem with fetching the city data, a response with an error message is returned with a status code of 500.
+    If there is a problem with fetching the city data,
+    a response with an error message is returned with a status code of 500.
     """
     url = GEO_URL + f'?q={city_name}&lang={lang}&appid={WEATHER_API_KEY}'
     response = requests.get(url)

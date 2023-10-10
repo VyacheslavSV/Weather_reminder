@@ -12,14 +12,13 @@ from weather_app.models import Weather, City, SubscribedCity
 from weather_app.serializers import WeatherSerializer, CitySerializer, SubscribedCitySerializer, UserSerializer
 from weather_app.utils import get_city_data, get_weather_data_coord
 
+logger = logging.getLogger(__name__)
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (AllowAny,)
-
-
-logger = logging.getLogger(__name__)
 
 
 class CityViewSet(viewsets.ModelViewSet):
@@ -28,6 +27,18 @@ class CityViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     def list(self, request, *args, **kwargs):
+        """
+        Retrieve a list of city data based on the provided city name.
+
+        Parameters:
+            request (Request): The HTTP request object.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            Response: The HTTP response object containing city data if found,
+            or an error message if not found.
+        """
         city_name = request.query_params.get('city_name')
         if not city_name:
             return super().list(request, *args, **kwargs)
@@ -43,6 +54,18 @@ class WeatherViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     def list(self, request, *args, **kwargs):
+        """
+        Retrieve a list of city data based on the provided city name.
+
+        Parameters:
+            request (Request): The HTTP request object.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            Response: The HTTP response object containing city data if found,
+            or an error message if not found.
+        """
         lat = request.query_params.get('lat')
         lon = request.query_params.get('lon')
         if lat and lon:
@@ -59,9 +82,26 @@ class SubscribedCityViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
+        """
+        Returns a filtered queryset based on the user making the request.
+
+        :param self: The instance of the class.
+        :return: A filtered queryset based on the user making the request.
+        """
         return self.queryset.filter(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
+        """
+        Create a new object.
+
+        Args:
+            request: The HTTP request object.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            A Response object with the serialized data and a status code of 201 (Created).
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         city = serializer.save(user=self.request.user)
@@ -71,12 +111,24 @@ class SubscribedCityViewSet(viewsets.ModelViewSet):
         subscription_info = {"email": self.request.user.email, "city": city.city.name, }
         subscription_info_json = json.dumps(subscription_info)
         startdatatime = timezone.now()
-        PeriodicTask.objects.create(interval=interval, name=f'Subscriptions {self.request.user}',
-                                    task='weather_app.tasks.send_weather_forecast_task',
-                                    args=[self.request.user.email, city.city.name], start_time=startdatatime)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        task_name = 'weather_app.tasks.send_weather_forecast_task'
+        PeriodicTask.objects.create(interval=interval, name=f'Subscriptions {self.request.user}', task=task_name,
+                                    kwargs=subscription_info_json, start_time=startdatatime)
+        data = serializer.data
+        return Response(data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
+        """
+        Update the object specified by the request.
+
+        Args:
+            request (Request): The request object containing the data to update the object.
+            args: Additional positional arguments.
+            kwargs: Additional keyword arguments.
+
+        Returns:
+            Response: The response object containing the serialized data of the updated object.
+        """
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -98,6 +150,17 @@ class SubscribedCityViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
+        """
+        Deletes the specified instance and the associated periodic task.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            Response: The response object with the status code indicating the success of the deletion.
+        """
         instance = self.get_object()
         task_name = f'Subscriptions {instance.id}'
         try:

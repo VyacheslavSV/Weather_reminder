@@ -22,14 +22,13 @@ services:
     build:
       context: django_weather_reminder
       dockerfile: src/Dockerfile_worker
-    command: celery -A django_weather_reminder worker -l info
+    command: celery -A django_weather_reminder worker -l info --time-limit 3600
     volumes:
       - static_volume:/home/django_weather_reminder/weather_app/staticfiles
       - media_volume:/home/django_weather_reminder/weather_app/media
     env_file:
       - .env.prod
     depends_on:
-      - db
       - redis
   db:
     image: postgres:13.0-alpine
@@ -48,7 +47,7 @@ services:
     depends_on:
       - web
   redis:
-    image: redis:7-alpine
+    image: redis:alpine
     restart: always
     expose:
       - 6379
@@ -62,9 +61,24 @@ services:
     depends_on:
       - worker
       - redis
+      - db
     volumes:
       - static_volume:/home/django_weather_reminder/weather_app/staticfiles
       - media_volume:/home/django_weather_reminder/weather_app/media
+  flower:
+    build:
+      context: django_weather_reminder
+      dockerfile: src/Dockerfile_worker
+    command: celery -A django_weather_reminder flower
+    volumes:
+      - static_volume:/home/django_weather_reminder/weather_app/staticfiles
+      - media_volume:/home/django_weather_reminder/weather_app/media
+    env_file:
+      - .env.prod
+    depends_on:
+      - redis
+    ports:
+      - "5555:5555"
 
 volumes:
   postgres_data:

@@ -12,7 +12,7 @@ RUN apk update \
 
 RUN pip install --upgrade pip
 RUN pip install flake8==3.9.2
-COPY ../.. .
+COPY .. .
 
 COPY ../requirements.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/django_weather_reminder/wheels -r requirements.txt
@@ -41,7 +41,7 @@ COPY src/entrypoint.prod.sh .
 RUN sed -i 's/\r$//g'  $APP_HOME/entrypoint.prod.sh
 RUN chmod +x  $APP_HOME/entrypoint.prod.sh
 
-COPY ../.. $APP_HOME
+COPY .. $APP_HOME
 RUN chown -R django_weather_reminder:django_weather_reminder $APP_HOME
 
 USER django_weather_reminder

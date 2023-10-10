@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'celery',
     'django_celery_beat',
-
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -153,10 +153,8 @@ REST_FRAMEWORK = {
 #         'rest_framework.renderers.BrowserRenderer',
 #     ],
 
-
-
 # Weather API and key
-WEATHER_API_KEY = os.environ.get("WEATHER_API_KEY")
+WEATHER_API_KEY = os.environ.get("WEATHER_API_KEY", "364be1b70859b8416d16006f5e875b94")
 GEO_URL = 'https://api.openweathermap.org/geo/1.0/direct'
 WEATHER_URL = 'https://api.openweathermap.org/data/2.5/weather'
 
@@ -201,31 +199,21 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 # config celery
-# app.conf.broker_url = 'redis://localhost:6379/0'
 app.conf.broker_url = 'redis://redis:6379/0'
 
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
-# CELERY_BROKER_URL = 'redis://redis:6379'
-
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
-# CELERY_TIMEZONE = 'UTC'
 
-# celery_beats settings
-# CELERY_BEAT_SCHEDULE = {
-#     'send_weather_emails': {
-#         'task': 'weather_app.tasks.send_weather_forecast_task',
-#         'schedule': timedelta(minutes=1),
-#     },
-# }
-# gmail_send
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_USER = 'greatweather600@gmail.com'
+EMAIL_HOST_PASSWORD = 'pvfgetzshgqplplk'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
+DEFAULT_FROM_EMAIL = 'greatweather60@gmail.com'

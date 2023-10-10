@@ -1,6 +1,8 @@
 import os
+from datetime import timedelta
 
 from celery import Celery
+from django.conf import settings
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_weather_reminder.settings')
@@ -13,11 +15,14 @@ app = Celery('django_weather_reminder')
 #   should have a `CELERY_` prefix.
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
-app.conf.broker_connection_retry_on_startup = True
+CELERY_BEAT_SCHEDULE = {
+    'send_weather_emails': {'task': 'weather_app.tasks.send_weather_forecast_task', 'schedule': timedelta(minutes=1),
+                            'args': []}, }
 
-# Load task modules from all registered Django apps.
 app.autodiscover_tasks()
-CELERY_IMPORTS = ('weather_app.tasks')
+
+if settings.DEBUG:
+    app.conf.update(task_always_eager=True)
 
 
 @app.task(bind=True)

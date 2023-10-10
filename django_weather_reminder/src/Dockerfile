@@ -25,6 +25,6 @@ COPY entrypoint.sh .
 RUN sed -i 's/\r$//g' /usr/src/django_weather_reminder/entrypoint.sh
 RUN chmod +x /usr/src/django_weather_reminder/entrypoint.sh
 
-COPY ../.. .
+COPY .. .
 
 ENTRYPOINT ["/usr/src/django_weather_reminder/entrypoint.sh"]

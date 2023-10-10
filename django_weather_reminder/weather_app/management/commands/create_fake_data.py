@@ -16,6 +16,16 @@ class Command(BaseCommand):
     """
 
     def handle(self, *args, **kwargs):
+        """
+        Handles the creation of users, cities, and weather data for testing purposes.
+
+        Parameters:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            None
+        """
         users = []
         cities = []
         for _ in range(10):
