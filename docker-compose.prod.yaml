@@ -17,6 +17,7 @@ services:
     depends_on:
       - db
       - redis
+      - celery-beat
   worker:
     restart: always
     build:
@@ -62,6 +63,7 @@ services:
       - worker
       - redis
       - db
+    restart: always
     volumes:
       - static_volume:/home/django_weather_reminder/weather_app/staticfiles
       - media_volume:/home/django_weather_reminder/weather_app/media

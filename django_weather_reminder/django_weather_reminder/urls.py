@@ -16,13 +16,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from rest_framework.schemas import get_schema_view as get_schema_rest_fr
 from rest_framework_simplejwt import views as jwt_views
 
+from weather_app.views import webhook
+from .yasg import urlpatterns as yasg_urlpatterns
 
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/v1/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/v1/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/v1/weather_reminder/', include('weather_app.urls'))
-]
+urlpatterns = [path('admin/', admin.site.urls),
+               # path('webhooks/', webhook, name='weather_webhook'), # webhook in procces of development
+               path('api/v1/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
+               path('api/v1/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+               path('api/v1/weather_reminder/', include('weather_app.urls')),
+               path('api_schema/', get_schema_rest_fr(), name='api_schema'),
+
+               ]
+urlpatterns += yasg_urlpatterns

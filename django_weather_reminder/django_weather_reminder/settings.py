@@ -25,10 +25,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev_pass_r")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-# DEBUG = int(os.environ.get("DEBUG", default=0))
-# ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", []).split(" ")
-ALLOWED_HOSTS = []
+# DEBUG = True
+DEBUG = int(os.environ.get("DEBUG", default=1))
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", []).split(" ")
+# ALLOWED_HOSTS = []
 CSRF_TRUSTED_ORIGINS = [os.environ.get("CSRF_TRUSTED_ORIGINS", "http://localhost:1337/")]
 
 
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'celery',
     'django_celery_beat',
     'django_celery_results',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -144,14 +145,15 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-    ]
+    ],
+
 }
 
 #for finish app add this element
-#     'DEFAULT_RENDERER_CLASS':[
-#         'rest_framework.renderers.JSONRenderer',
-#         'rest_framework.renderers.BrowserRenderer',
-#     ],
+    # 'DEFAULT_RENDERER_CLASS': [
+    #     'rest_framework.renderers.JSONRenderer',
+    #     'rest_framework.renderers.BrowserRenderer',
+    # ],
 
 # Weather API and key
 WEATHER_API_KEY = os.environ.get("WEATHER_API_KEY", "364be1b70859b8416d16006f5e875b94")
